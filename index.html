@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Document</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Playfair+Display:wght@800;900&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+  <div id="login">
+    <div class="auth-card">
+      <button id="close-login" type="button">×</button>
+      <div class="auth-logo">XIN CHÀO</div>
+      <p class="auth-welcome">Chào mừng bạn đến với cửa hàng</p>
+      <div aria-label="Tài khoản" class="auth-tabs" role="tablist">
+        <button aria-selected="true" class="auth-tab active" id="tab-login" type="button">Đăng nhập</button>
+        <button aria-selected="false" class="auth-tab" id="tab-register" type="button">Đăng ký</button>
+      </div>
+      <p aria-live="polite" class="auth-message" id="auth-message" role="status" style="display:none;"></p>
+      <form id="form-login" novalidate="">
+        <div class="auth-field">
+          <label for="user">Tài khoản</label>
+          <input autocomplete="username" id="user" name="username" placeholder="Nhập tên tài khoản" required=""
+            type="text" />
+        </div>
+        <div class="auth-field">
+          <label for="pass">Mật khẩu</label>
+          <input autocomplete="current-password" id="pass" name="password" placeholder="Nhập mật khẩu" required=""
+            type="password" />
+        </div>
+        <label class="auth-check"><input class="toggle-password" data-target="pass" type="checkbox" /> Hiện mật
+          khẩu</label>
+        <button class="auth-submit" type="submit">Đăng nhập</button>
+      </form>
+      <form id="form-register" novalidate="" style="display:none;">
+        <div class="auth-field">
+          <label for="reg-user">Tài khoản</label>
+          <input autocomplete="username" id="reg-user" maxlength="20" name="username"
+            placeholder="3–20 ký tự: chữ, số hoặc _" required="" type="text" />
+        </div>
+        <div class="auth-field">
+          <label for="reg-email">Email</label>
+          <input autocomplete="email" id="reg-email" name="email" placeholder="Nhập email" required="" type="email" />
+        </div>
+        <div class="auth-field">
+          <label for="reg-pass">Mật khẩu</label>
+          <input autocomplete="new-password" id="reg-pass" name="password" placeholder="Tối thiểu 8 ký tự" required=""
+            type="password" />
+        </div>
+        <div class="auth-field">
+          <label for="reg-confirm">Xác nhận mật khẩu</label>
+          <input autocomplete="new-password" id="reg-confirm" name="password-confirm" placeholder="Nhập lại mật khẩu"
+            required="" type="password" />
+        </div>
+        <label class="auth-check"><input class="toggle-password" data-target="reg-pass,reg-confirm" type="checkbox" />
+          Hiện mật khẩu</label>
+        <button class="auth-submit" id="btn-register" type="submit">Tạo tài khoản</button>
+      </form>
+      <p class="auth-switch" id="switch-to-register">Chưa có tài khoản? <button class="auth-link"
+          data-auth-tab="register" type="button">Đăng ký ngay</button></p>
+      <p class="auth-switch" id="switch-to-login" style="display:none;">Đã có tài khoản? <button class="auth-link"
+          data-auth-tab="login" type="button">Đăng nhập</button></p>
+      <p class="auth-note">Bản demo đăng nhập dành cho website tĩnh.</p>
+    </div>
+  </div>
+  <script>
+    $(function () {
+      const USERS_KEY = "choncafe_users_v1";
+      const CURRENT_KEY = "choncafe_current_user";
+
+      function getUsers() {
+        try {
+          const data = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+          return Array.isArray(data) ? data : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      // Mở form đăng nhập
+      $("#btn-open-login").click(function () {
+        $("#login").css("display", "flex");
+        switchTab("login");
+      });
+
+      // Mở form đăng ký
+      $("#btn-open-register").click(function () {
+        $("#login").css("display", "flex");
+        switchTab("register");
+      });
+
+      // Đóng form bằng nút X
+      $("#close-login").click(function () {
+        $("#login").hide();
+      });
+
+      function showMessage(message, success = false) {
+        $("#auth-message").text(message)
+          .toggleClass("auth-success", success)
+          .toggleClass("auth-error", !success)
+          .show();
+      }
+
+      function switchTab(tab) {
+        const registering = tab === "register";
+        $("#form-login, #switch-to-register").toggle(!registering);
+        $("#form-register, #switch-to-login").toggle(registering);
+        $("#tab-login").toggleClass("active", !registering).attr("aria-selected", String(!registering));
+        $("#tab-register").toggleClass("active", registering).attr("aria-selected", String(registering));
+        $("#auth-message").hide().text("");
+        $("#pass, #reg-pass, #reg-confirm").val("").attr("type", "password");
+        $(".toggle-password").prop("checked", false);
+      }
+
+      // Cập nhật nút tài khoản, không thay đổi nội dung trang chủ.
+      function updateAuthButtons() {
+        const activeUser = sessionStorage.getItem(CURRENT_KEY);
+        const loggedIn = !!activeUser && (activeUser === "admin" ||
+          getUsers().some(u => u.username === activeUser));
+        $("#btn-open-login, #btn-open-register").toggle(!loggedIn);
+        $("#btn-logout").remove();
+        if (loggedIn) {
+          $("#auth-buttons").append('<button type="button" id="btn-logout">Đăng xuất (' + $("<span>").text(activeUser).html() + ')</button>');
+        } else {
+          sessionStorage.removeItem(CURRENT_KEY);
+        }
+        $("#login").hide();
+      }
+      updateAuthButtons();
+
+      $("#tab-login, [data-auth-tab='login']").on("click", function () { switchTab("login"); });
+      $("#tab-register, [data-auth-tab='register']").on("click", function () { switchTab("register"); });
+
+      $(".toggle-password").on("change", function () {
+        const type = $(this).is(":checked") ? "text" : "password";
+        $(this).data("target").split(",").forEach(id => $("#" + id).attr("type", type));
+      });
+
+      // Tạo mã kiểm tra mật khẩu có muối; chỉ để demo phía trình duyệt.
+      async function hashPassword(password, salt) {
+        const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+        const saltBytes = Uint8Array.from(salt.match(/.{2}/g), v => parseInt(v, 16));
+        const result = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: saltBytes, iterations: 100000, hash: "SHA-256" }, key, 256);
+        return Array.from(new Uint8Array(result), byte => byte.toString(16).padStart(2, "0")).join("");
+      }
+
+      $("#form-register").on("submit", async function (event) {
+        event.preventDefault();
+        const username = $("#reg-user").val().trim();
+        const email = $("#reg-email").val().trim().toLowerCase();
+        const password = $("#reg-pass").val();
+        const confirm = $("#reg-confirm").val();
+
+        if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+          showMessage("Tài khoản phải có 3–20 ký tự, chỉ gồm chữ không dấu, số hoặc dấu _. ");
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showMessage("Email không đúng định dạng.");
+          return;
+        }
+        if (password.length < 8) {
+          showMessage("Mật khẩu cần có ít nhất 8 ký tự.");
+          return;
+        }
+        if (password !== confirm) {
+          showMessage("Mật khẩu xác nhận không khớp.");
+          return;
+        }
+        const users = getUsers();
+        if (username.toLowerCase() === "admin" || users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+          showMessage("Tên tài khoản đã tồn tại.");
+          return;
+        }
+        if (users.some(u => u.email === email)) {
+          showMessage("Email này đã được sử dụng.");
+          return;
+        }
+
+        $("#btn-register").prop("disabled", true).text("Đang đăng ký...");
+        try {
+          const salt = Array.from(crypto.getRandomValues(new Uint8Array(16)), v => v.toString(16).padStart(2, "0")).join("");
+          const passwordHash = await hashPassword(password, salt);
+          users.push({ username, email, salt, passwordHash });
+          localStorage.setItem(USERS_KEY, JSON.stringify(users));
+          this.reset();
+          switchTab("login");
+          $("#user").val(username);
+          showMessage("Đăng ký thành công! Hãy đăng nhập bằng tài khoản mới.", true);
+        } catch (error) {
+          showMessage("Không lưu được tài khoản. Hãy mở website bằng Live Server trên localhost.");
+        } finally {
+          $("#btn-register").prop("disabled", false).text("Tạo tài khoản");
+        }
+      });
+
+      $("#form-login").on("submit", async function (event) {
+        event.preventDefault();
+        const username = $("#user").val().trim();
+        const password = $("#pass").val();
+        if (!username || !password) {
+          showMessage("Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
+          return;
+        }
+
+        let correct = username === "admin" && password === "1234";
+        let displayName = username;
+        if (!correct) {
+          const user = getUsers().find(u => u.username.toLowerCase() === username.toLowerCase());
+          if (user) {
+            try {
+              correct = (await hashPassword(password, user.salt)) === user.passwordHash;
+              displayName = user.username;
+            } catch (error) {
+              showMessage("Trình duyệt không hỗ trợ xác thực demo. Hãy sử dụng localhost.");
+              return;
+            }
+          }
+        }
+        if (correct) {
+          sessionStorage.setItem(CURRENT_KEY, displayName);
+          updateAuthButtons();
+        } else {
+          showMessage("Sai tài khoản hoặc mật khẩu.");
+        }
+      });
+
+      $("#auth-buttons").on("click", "#btn-logout", function () {
+        sessionStorage.removeItem(CURRENT_KEY);
+        $("#form-login")[0].reset();
+        switchTab("login");
+        updateAuthButtons();
+      });
+    });
+  </script>
+  <div class="container">
+    <div class="menu">
+      <ul>
+        <li><a href="index.html">TRANG CHỦ</a></li>
+        <li><a href="index.html#show">SẢN PHẨM</a>
+          <ul id="danhmuc">
+            <li><a href="index.html#cf">Cà phê</a></li>
+            <li><a href="index.html#bm">Bánh mì</a></li>
+          </ul>
+        </li>
+        <li><a href="gioi-thieu.html">GIỚI THIỆU</a></li>
+        <li><a href="tin-tuc.html">TIN TỨC</a></li>
+        <li><a href="index.html#lien-he">LIÊN HỆ</a></li>
+        <li class="header-cart"><a aria-label="Xem giỏ hàng" href="cart.html" title="Giỏ hàng"><i aria-hidden="true"
+              class="fa-solid fa-cart-shopping"></i><span>Giỏ hàng</span><span class="cart-count" hidden=""
+              id="cart-count">0</span></a></li>
+        <li class="profile-account">
+          <button aria-label="Tài khoản cá nhân" class="profile-trigger" title="Tài khoản cá nhân" type="button">
+            <i class="fa-solid fa-user"></i>
+          </button>
+          <div class="home-auth" id="auth-buttons">
+            <button id="btn-open-login" type="button">Đăng nhập</button>
+            <button id="btn-open-register" type="button">Đăng ký</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="row">
+      <div class="banner-1">
+        <img alt="" id="banner" src="images/banner1_29_11zon.webp" />
+        <div class="btn-left" onclick="left()"><i class="fa-solid fa-angle-left"></i></div>
+        <div class="btn-right" onclick="right()"><i class="fa-solid fa-angle-right"></i></div>
+        <div class="btn">
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+    </div>
+    <div class="container" id="san-pham">
+      <h1 class="catalog-heading">MỘT CHẤT PHIN TỪ 1999</h1>
+      <p class="cart-notice" hidden="" id="cart-notice" role="status"></p>
+      <div class="row" id="show">
+      </div>
+      <div class="row"></div>
+    </div>
+    <div class="container" id="gioi-thieu">
+      <h1 class="catalog-heading">CÀ PHÊ</h1>
+      <div class="row" id="cf">
+      </div>
+      <div class="row"></div>
+    </div>
+    <div class="container">
+      <h1 class="catalog-heading">BÁNH MÌ</h1>
+      <div class="row" id="bm">
+      </div>
+      <div class="row"></div>
+    </div>
+    <div class="container" id="tin-tuc">
+      <!-- <h1 class="catalog-heading">SẢN PHẨM KHUYẾN MÃI</h1> -->
+      <div class="row" id="ll">
+      </div>
+      <div class="row"></div>
+    </div>
+    <div id="lien-he"></div>
+    <footer class="chon-footer" id="chan-trang">
+      <div class="chon-footer-inner">
+        <div class="chon-footer-brand">
+          <a aria-label="Chồn Cafe - Trang chủ" class="chon-footer-mark" href="index.html"><span
+              class="chon-mark-icon">☕</span><span>CHỒN<br />CAFE</span></a>
+          <p>Cà phê đậm vị, trọn từng khoảnh khắc.</p>
+        </div>
+        <div class="chon-footer-section">
+          <h3>VỀ CHỒN CAFE</h3>
+          <a href="gioi-thieu.html">Giới thiệu</a>
+          <a href="index.html#show">Sản phẩm</a>
+          <a href="tin-tuc.html">Tin tức &amp; khuyến mãi</a>
+        </div>
+        <div class="chon-footer-section">
+          <h3>KHÁM PHÁ</h3>
+          <a href="index.html#show">Thực đơn cà phê</a>
+          <a href="cart.html">Giỏ hàng của bạn</a>
+          <a href="index.html#lien-he">Liên hệ</a>
+        </div>
+        <div class="chon-footer-section chon-footer-social">
+          <h3>KẾT NỐI VỚI CHÚNG TÔI</h3>
+          <p>Theo dõi Chồn Cafe để khám phá những hương vị và ưu đãi mới.</p>
+          <div aria-label="Các kênh mạng xã hội" class="chon-social-icons">
+            <i aria-label="Facebook" class="fa-brands fa-facebook-f" title="Facebook"></i>
+            <i aria-label="Instagram" class="fa-brands fa-instagram" title="Instagram"></i>
+            <i aria-label="TikTok" class="fa-brands fa-tiktok" title="TikTok"></i>
+          </div>
+        </div>
+      </div>
+      <div class="chon-footer-bottom">© 2026 Chồn Cafe. All rights reserved.</div>
+    </footer>
+    <script>
+      arr = ["images/banner1_29_11zon.webp", "images/banner2_13_11zon.webp", "images/banner3_28_11zon.webp", "images/banner4_25_11zon.webp"];
+      let i = 0;
+      function right() {
+        document.getElementById("banner").src = arr[i];
+        i++;
+        if (i == arr.length) {
+          i = 0;
+        }
+      }
+      function left() {
+        document.getElementById("banner").src = arr[i];
+        i--;
+        if (i < 0) {
+          i = arr.length - 1;
+        }
+      }
+    </script>
+    <script src="js/code.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/sua-loi-giao-dien.js"></script>
+
+  </div>
+</body>
+
+</html>

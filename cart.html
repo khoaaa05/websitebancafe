@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Document</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Playfair+Display:wght@800;900&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="menu">
+      <ul>
+        <li><a href="index.html">TRANG CHỦ</a></li>
+        <li><a href="index.html#show">SẢN PHẨM</a>
+          <ul id="danhmuc">
+            <li><a href="index.html#cf">Cà phê</a></li>
+            <li><a href="index.html#bm">Bánh mì</a></li>
+          </ul>
+        </li>
+        <li><a href="gioi-thieu.html">GIỚI THIỆU</a></li>
+        <li><a href="tin-tuc.html">TIN TỨC</a></li>
+        <li><a href="index.html#lien-he">LIÊN HỆ</a></li>
+        <li class="header-cart"><a aria-label="Xem giỏ hàng" href="cart.html" title="Giỏ hàng"><i aria-hidden="true"
+              class="fa-solid fa-cart-shopping"></i><span>Giỏ hàng</span><span class="cart-count" hidden=""
+              id="cart-count">0</span></a></li>
+      </ul>
+    </div>
+    <div class="row">
+      <div class="banner-1">
+        <img alt="" id="banner" src="images/banner1_29_11zon.webp" />
+        <div class="btn-left" onclick="left()"><i class="fa-solid fa-angle-left"></i></div>
+        <div class="btn-right" onclick="right()"><i class="fa-solid fa-angle-right"></i></div>
+        <div class="btn">
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+          <div class="btn1"></div>
+        </div>
+      </div>
+    </div>
+    <main class="cart-page">
+      <h1>GIỎ HÀNG CỦA BẠN</h1>
+      <p class="cart-subtitle">Kiểm tra sản phẩm trong giỏ hàng trước khi đặt hàng.</p>
+      <div class="cart-table-wrap">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Đơn giá</th>
+              <th>Số lượng</th>
+              <th>Thành tiền</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="addCart"></tbody>
+        </table>
+      </div>
+      <p class="empty-cart" hidden="" id="empty-cart">Giỏ hàng của bạn đang trống. <a href="index.html#show">Tiếp tục
+          mua sắm</a></p>
+      <div class="cart-summary"><span>Tổng cộng</span><strong id="tongtien">0đ</strong></div>
+      <div class="cart-actions"><a class="back-shopping" href="index.html#show">Tiếp tục mua sắm</a><button
+          id="checkout-button" type="button">Thanh toán</button></div>
+    </main>
+    <section aria-labelledby="recommendations-heading" class="cart-recommendations">
+      <div class="suggest-head">
+        <h2 id="recommendations-heading">CÓ THỂ BẠN SẼ THÍCH</h2><a href="index.html#show">Xem tất cả sản phẩm</a>
+      </div>
+      <div class="suggest-grid">
+        <article class="suggest-card"><a aria-label="Xem chi tiết Cafe dừa" class="suggest-photo"
+            href="detail.html?id=1"><img alt="Cafe dừa" loading="lazy" src="images/bannercafedua_11_11zon.webp" /></a>
+          <div class="suggest-info"><a class="suggest-name" href="detail.html?id=1">Cafe dừa</a>
+            <p class="suggest-type">Nước uống</p>
+            <p class="suggest-description">abc..</p>
+            <div class="suggest-bottom"><strong class="suggest-price">30.000đ</strong><button
+                aria-label="Thêm sản phẩm vào giỏ hàng" class="suggest-plus" data-product-id="1"
+                title="Thêm vào giỏ hàng" type="button">+</button></div>
+          </div>
+        </article>
+        <article class="suggest-card"><a aria-label="Xem chi tiết Americano đào" class="suggest-photo"
+            href="detail.html?id=2"><img alt="Americano đào" loading="lazy" src="images/banneramericanodao_16_11zon.webp" /></a>
+          <div class="suggest-info"><a class="suggest-name" href="detail.html?id=2">Americano đào</a>
+            <p class="suggest-type">Nước uống</p>
+            <p class="suggest-description">abc..</p>
+            <div class="suggest-bottom"><strong class="suggest-price">30.000đ</strong><button
+                aria-label="Thêm sản phẩm vào giỏ hàng" class="suggest-plus" data-product-id="2"
+                title="Thêm vào giỏ hàng" type="button">+</button></div>
+          </div>
+        </article>
+        <article class="suggest-card"><a aria-label="Xem chi tiết Phin sữa đá" class="suggest-photo"
+            href="detail.html?id=3"><img alt="Phin sữa đá" loading="lazy" src="images/bannerphinsuada_12_11zon.webp" /></a>
+          <div class="suggest-info"><a class="suggest-name" href="detail.html?id=3">Phin sữa đá</a>
+            <p class="suggest-type">Nước uống</p>
+            <p class="suggest-description">abc..</p>
+            <div class="suggest-bottom"><strong class="suggest-price">30.000đ</strong><button
+                aria-label="Thêm sản phẩm vào giỏ hàng" class="suggest-plus" data-product-id="3"
+                title="Thêm vào giỏ hàng" type="button">+</button></div>
+          </div>
+        </article>
+        <article class="suggest-card"><a aria-label="Xem chi tiết Trà xanh" class="suggest-photo"
+            href="detail.html?id=4"><img alt="Trà xanh" loading="lazy" src="images/bannertraxanh_19_11zon.webp" /></a>
+          <div class="suggest-info"><a class="suggest-name" href="detail.html?id=4">Trà xanh</a>
+            <p class="suggest-type">Nước uống</p>
+            <p class="suggest-description">abc..</p>
+            <div class="suggest-bottom"><strong class="suggest-price">30.000đ</strong><button
+                aria-label="Thêm sản phẩm vào giỏ hàng" class="suggest-plus" data-product-id="4"
+                title="Thêm vào giỏ hàng" type="button">+</button></div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <footer class="chon-footer" id="chan-trang">
+      <div class="chon-footer-inner">
+        <div class="chon-footer-brand">
+          <a aria-label="Chồn Cafe - Trang chủ" class="chon-footer-mark" href="index.html"><span
+              class="chon-mark-icon">☕</span><span>CHỒN<br />CAFE</span></a>
+          <p>Cà phê đậm vị, trọn từng khoảnh khắc.</p>
+        </div>
+        <div class="chon-footer-section">
+          <h3>VỀ CHỒN CAFE</h3>
+          <a href="gioi-thieu.html">Giới thiệu</a>
+          <a href="index.html#show">Sản phẩm</a>
+          <a href="tin-tuc.html">Tin tức &amp; khuyến mãi</a>
+        </div>
+        <div class="chon-footer-section">
+          <h3>KHÁM PHÁ</h3>
+          <a href="index.html#show">Thực đơn cà phê</a>
+          <a href="cart.html">Giỏ hàng của bạn</a>
+          <a href="index.html#lien-he">Liên hệ</a>
+        </div>
+        <div class="chon-footer-section chon-footer-social">
+          <h3>KẾT NỐI VỚI CHÚNG TÔI</h3>
+          <p>Theo dõi Chồn Cafe để khám phá những hương vị và ưu đãi mới.</p>
+          <div aria-label="Các kênh mạng xã hội" class="chon-social-icons">
+            <i aria-label="Facebook" class="fa-brands fa-facebook-f" title="Facebook"></i>
+            <i aria-label="Instagram" class="fa-brands fa-instagram" title="Instagram"></i>
+            <i aria-label="TikTok" class="fa-brands fa-tiktok" title="TikTok"></i>
+          </div>
+        </div>
+      </div>
+      <div class="chon-footer-bottom">© 2026 Chồn Cafe. All rights reserved.</div>
+    </footer>
+    <!-- <script>
+      arr = ["images/banner1_29_11zon.webp", "images/banner2_13_11zon.webp", "images/banner3_28_11zon.webp", "images/banner4_25_11zon.webp"];
+      let i = 0;
+      function right() {
+        document.getElementById("banner").src = arr[i];
+        i++;
+        if (i == arr.length) {
+          i = 0;
+        }
+      }
+      function left() {
+        document.getElementById("banner").src = arr[i];
+        i--;
+        if (i < 0) {
+          i = arr.length - 1;
+        }
+      }
+    </script> -->
+    <script src="js/code.js"></script>
+    <div hidden="" id="productAll"></div>
+    <div hidden="" id="information_pay"></div><input id="thanhtien" type="hidden" />
+    <script src="js/cart.js"></script>
+    <script src="js/sua-loi-giao-dien.js"></script>
+
+
+  </div>
+</body>
+
+</html>

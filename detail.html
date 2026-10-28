@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="css/style.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" rel="stylesheet"/>
+<title>Document</title>
+</head>
+<body class="detail-page">
+<div class="container">
+<div class="menu">
+<ul>
+<li><a href="index.html">TRANG CHỦ</a></li>
+<li><a href="index.html#show">SẢN PHẨM</a>
+<ul id="danhmuc">
+<li><a href="index.html#cf">Cà phê</a></li><li><a href="index.html#bm">Bánh mì</a></li>
+</ul>
+</li>
+<li><a href="gioi-thieu.html">GIỚI THIỆU</a></li>
+<li><a href="tin-tuc.html">TIN TỨC</a></li>
+<li><a href="index.html#lien-he">LIÊN HỆ</a></li>
+<li class="header-cart"><a aria-label="Xem giỏ hàng" href="cart.html" title="Giỏ hàng"><i aria-hidden="true" class="fa-solid fa-cart-shopping"></i><span>Giỏ hàng</span><span class="cart-count" hidden="" id="cart-count">0</span></a></li>
+</ul>
+</div>
+<div class="row" style="margin-top: 10px;">
+<div class="left">
+<img alt="" id="hinh"/>
+</div>
+<div class="right">
+<div class="row" id="ten">
+<h1 id="tensp"></h1>
+</div>
+<div class="row">
+<h2 id="gia"></h2>
+</div>
+<div class="row">
+<div class="c">
+<p>S</p>
+</div>
+<div class="c">
+<p>M</p>
+</div>
+<div class="c">
+<p>L</p>
+</div>
+</div>
+<div class="purchase-actions"><button id="add-to-cart" type="button">Thêm vào giỏ hàng</button><button id="buy-now" type="button">Mua ngay</button></div><p aria-live="polite" id="purchase-message" role="status"></p>
+</div>
+</div>
+<div class="sptt">
+<h2>Sản phẩm tương tự</h2>
+<div class="related-product-grid" id="sptt"></div>
+</div>
+<script src="js/code.js"></script>
+<script>
+  // Lấy id sản phẩm từ URL
+  let currentUrl = window.location.href;
+  let url = new URL(currentUrl);
+  let id = url.searchParams.get("id");
+
+  // Tìm sản phẩm trong danh sách ds
+  let item = ds.find(a => a.id === Number(id));
+
+  if (item) {
+    // Hiển thị hình ảnh
+    document.getElementById("hinh").src = `images/${item.hinh}`;
+
+    // Hiển thị tên sản phẩm
+    document.getElementById("tensp").innerText = item.ten;
+
+    // Hiển thị giá tiền
+    document.getElementById("gia").innerText =
+      "Giá: " + Number(item.gia).toLocaleString("vi-VN") + " VNĐ";
+  } else {
+    document.getElementById("tensp").innerText = "Không tìm thấy sản phẩm";
+  }
+</script>
+<script>
+  let loai = item ? item.loai : null;
+
+let sptt = ds.filter(sp => sp.loai === loai && sp.id !== (item ? item.id : -1));
+
+// Hiển thị thẻ sản phẩm tương tự cùng mẫu trang chủ.
+// Đoạn này nằm trong html; các file JS gốc không thay đổi.
+const spttGrid = document.getElementById('sptt');
+if (spttGrid) {
+  sptt.forEach(function (sp) {
+    const href = 'detail.html?id=' + encodeURIComponent(sp.id);
+    const card = document.createElement('article');
+    card.className = 'product-card';
+    const pic = document.createElement('a');
+    pic.className = 'product-image';
+    pic.href = href;
+    pic.setAttribute('aria-label', 'Xem ' + sp.ten);
+    const img = document.createElement('img');
+    img.src = 'images/' + sp.hinh;
+    img.alt = sp.ten;
+    img.loading = 'lazy';
+    pic.appendChild(img);
+    const info = document.createElement('div');
+    info.className = 'product-info';
+    const brand = document.createElement('span');
+    brand.className = 'product-brand';
+    brand.textContent = 'CHỒN CAFE';
+    const name = document.createElement('a');
+    name.className = 'product-name';
+    name.href = href;
+    name.textContent = sp.ten;
+    const bottom = document.createElement('div');
+    bottom.className = 'product-bottom';
+    const price = document.createElement('strong');
+    price.className = 'product-price';
+    price.textContent = Number(sp.gia || 0).toLocaleString('vi-VN') + 'đ';
+    const plus = document.createElement('a');
+    plus.className = 'product-add';
+    plus.href = href;
+    plus.textContent = '+';
+    plus.title = 'Xem chi tiết sản phẩm';
+    plus.setAttribute('aria-label', 'Xem chi tiết ' + sp.ten);
+    bottom.append(price, plus);
+    info.append(brand, name, bottom);
+    card.append(pic, info);
+    spttGrid.appendChild(card);
+  });
+}
+
+    </script>
+
+
+<footer class="chon-footer" id="chan-trang">
+<div class="chon-footer-inner">
+<div class="chon-footer-brand">
+<a aria-label="Chồn Cafe - Trang chủ" class="chon-footer-mark" href="index.html"><span class="chon-mark-icon">☕</span><span>CHỒN<br/>CAFE</span></a>
+<p>Cà phê đậm vị, trọn từng khoảnh khắc.</p>
+</div>
+<div class="chon-footer-section">
+<h3>VỀ CHỒN CAFE</h3>
+<a href="gioi-thieu.html">Giới thiệu</a>
+<a href="index.html#show">Sản phẩm</a>
+<a href="tin-tuc.html">Tin tức &amp; khuyến mãi</a>
+</div>
+<div class="chon-footer-section">
+<h3>KHÁM PHÁ</h3>
+<a href="index.html#show">Thực đơn cà phê</a>
+<a href="cart.html">Giỏ hàng của bạn</a>
+<a href="index.html#lien-he">Liên hệ</a>
+</div>
+<div class="chon-footer-section chon-footer-social">
+<h3>KẾT NỐI VỚI CHÚNG TÔI</h3>
+<p>Theo dõi Chồn Cafe để khám phá những hương vị và ưu đãi mới.</p>
+<div aria-label="Các kênh mạng xã hội" class="chon-social-icons">
+<i aria-label="Facebook" class="fa-brands fa-facebook-f" title="Facebook"></i>
+<i aria-label="Instagram" class="fa-brands fa-instagram" title="Instagram"></i>
+<i aria-label="TikTok" class="fa-brands fa-tiktok" title="TikTok"></i>
+</div>
+</div>
+</div>
+<div class="chon-footer-bottom">© 2026 Chồn Cafe. All rights reserved.</div>
+</footer>
+</div><script src="js/sua-loi-giao-dien.js"></script>
+</body>
+</html>
